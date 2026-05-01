@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>学習キャンバス — HTTPS</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 32px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header .tag {
+      display: inline-block;
+      background: #3b82f6;
+      color: white;
+      font-size: 11px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .header h1 {
+      font-size: 36px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .header p {
+      color: #94a3b8;
+      margin-top: 8px;
+      font-size: 15px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #1e2130;
+      border-radius: 16px;
+      padding: 28px;
+      border: 1px solid #2d3148;
+    }
+
+    .card h2 {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #64748b;
+      margin-bottom: 20px;
+    }
+
+    /* --- HTTP vs HTTPS 比較 --- */
+    .compare {
+      display: flex;
+      gap: 16px;
+    }
+
+    .compare-box {
+      flex: 1;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .compare-box.http {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+    }
+
+    .compare-box.https {
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.3);
+    }
+
+    .compare-box .icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .compare-box .label {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .compare-box.http .label { color: #ef4444; }
+    .compare-box.https .label { color: #22c55e; }
+
+    .compare-box .desc {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+
+    /* --- 通信フロー --- */
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .flow-step {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: #252840;
+      border-radius: 10px;
+      padding: 14px 18px;
+    }
+
+    .flow-step .num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #3b82f6;
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .flow-step .text {
+      font-size: 14px;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    .flow-step .text strong {
+      color: white;
+    }
+
+    /* --- セキュリティヘッダー --- */
+    .header-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .header-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 10px;
+      background: #252840;
+    }
+
+    .header-item .badge {
+      background: #1e40af;
+      color: #93c5fd;
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      margin-top: 2px;
+      font-weight: 600;
+    }
+
+    .header-item .info .name {
+      font-size: 13px;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 3px;
+    }
+
+    .header-item .info .desc {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    /* --- 攻撃マップ --- */
+    .attack-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .attack-item {
+      padding: 14px;
+      border-radius: 10px;
+      background: #252840;
+      border-left: 3px solid;
+    }
+
+    .attack-item.red { border-color: #ef4444; }
+    .attack-item.orange { border-color: #f97316; }
+    .attack-item.yellow { border-color: #eab308; }
+    .attack-item.purple { border-color: #a855f7; }
+
+    .attack-item .atk-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 4px;
+    }
+
+    .attack-item .atk-ja {
+      font-size: 11px;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+
+    .attack-item .atk-desc {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    /* --- スコア --- */
+    .score-section {
+      grid-column: 1 / -1;
+    }
+
+    .score-bar-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .score-bar-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .score-bar-item .s-label {
+      width: 220px;
+      font-size: 13px;
+      color: #cbd5e1;
+      flex-shrink: 0;
+    }
+
+    .score-bar-item .bar-bg {
+      flex: 1;
+      height: 8px;
+      background: #2d3148;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .score-bar-item .bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: width 1s ease;
+    }
+
+    .score-bar-item .s-val {
+      width: 36px;
+      text-align: right;
+      font-size: 13px;
+      font-weight: 600;
+      color: #60a5fa;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="tag">学習キャンバス</div>
+    <h1>HTTPS の仕組み</h1>
+    <p>HTTP · SSL/TLS · セキュリティヘッダー · 攻撃手法</p>
+  </div>
+
+  <div class="grid">
+
+    <!-- HTTP vs HTTPS -->
+    <div class="card">
+      <h2>HTTP vs HTTPS</h2>
+      <div class="compare">
+        <div class="compare-box http">
+          <div class="icon">🔓</div>
+          <div class="label">HTTP</div>
+          <div class="desc">データが平文で流れる。<br>途中で誰でも読める。</div>
+        </div>
+        <div class="compare-box https">
+          <div class="icon">🔒</div>
+          <div class="label">HTTPS</div>
+          <div class="desc">データが暗号化される。<br>途中では読めない。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 通信フロー -->
+    <div class="card">
+      <h2>HTTPS 通信の流れ</h2>
+      <div class="flow">
+        <div class="flow-step">
+          <div class="num">1</div>
+          <div class="text">ブラウザが <strong>https://</strong> のサイトにアクセス</div>
+        </div>
+        <div class="flow-step">
+          <div class="num">2</div>
+          <div class="text">サーバーが <strong>SSL証明書</strong>（身分証）を提示</div>
+        </div>
+        <div class="flow-step">
+          <div class="num">3</div>
+          <div class="text">ブラウザが証明書の <strong>真偽を検証</strong></div>
+        </div>
+        <div class="flow-step">
+          <div class="num">4</div>
+          <div class="text"><strong>暗号化された通信</strong>が始まる 🔒</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- セキュリティヘッダー -->
+    <div class="card">
+      <h2>セキュリティヘッダー一覧</h2>
+      <div class="header-list">
+        <div class="header-item">
+          <div class="badge">HSTS</div>
+          <div class="info">
+            <div class="name">Strict-Transport-Security</div>
+            <div class="desc">HTTPSを強制。HTTPへのダウングレードを防ぐ。</div>
+          </div>
+        </div>
+        <div class="header-item">
+          <div class="badge">XFO</div>
+          <div class="info">
+            <div class="name">X-Frame-Options</div>
+            <div class="desc">iframeへの埋め込みを禁止。クリックジャッキング対策。</div>
+          </div>
+        </div>
+        <div class="header-item">
+          <div class="badge">CSP</div>
+          <div class="info">
+            <div class="name">Content-Security-Policy</div>
+            <div class="desc">外部スクリプトの読み込みを制限。XSS対策。</div>
+          </div>
+        </div>
+        <div class="header-item">
+          <div class="badge">XCTO</div>
+          <div class="info">
+            <div class="name">X-Content-Type-Options</div>
+            <div class="desc">ファイルタイプの自動判定を禁止。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 攻撃マップ -->
+    <div class="card">
+      <h2>攻撃手法マップ</h2>
+      <div class="attack-grid">
+        <div class="attack-item red">
+          <div class="atk-name">MITM攻撃</div>
+          <div class="atk-ja">中間者攻撃</div>
+          <div class="atk-desc">通信を途中で盗聴・改ざん</div>
+        </div>
+        <div class="attack-item orange">
+          <div class="atk-name">Clickjacking</div>
+          <div class="atk-ja">クリックジャッキング</div>
+          <div class="atk-desc">透明なiframeで操作を乗っ取る</div>
+        </div>
+        <div class="attack-item yellow">
+          <div class="atk-name">XSS</div>
+          <div class="atk-ja">クロスサイトスクリプティング</div>
+          <div class="atk-desc">悪意あるスクリプトを注入</div>
+        </div>
+        <div class="attack-item purple">
+          <div class="atk-name">MIME Sniffing</div>
+          <div class="atk-ja">MIMEスニッフィング</div>
+          <div class="atk-desc">ファイル種別を偽装して実行</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- スコア比較 -->
+    <div class="card score-section">
+      <h2>有名サイトのセキュリティスコア比較</h2>
+      <div class="score-bar-wrap">
+        <div class="score-bar-item">
+          <div class="s-label">github.com</div>
+          <div class="bar-bg"><div class="bar-fill" style="width:100%"></div></div>
+          <div class="s-val">6/6</div>
+        </div>
+        <div class="score-bar-item">
+          <div class="s-label">yahoo.co.jp</div>
+          <div class="bar-bg"><div class="bar-fill" style="width:83%"></div></div>
+          <div class="s-val">5/6</div>
+        </div>
+        <div class="score-bar-item">
+          <div class="s-label">google.com</div>
+          <div class="bar-bg"><div class="bar-fill" style="width:50%"></div></div>
+          <div class="s-val">3/6</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
