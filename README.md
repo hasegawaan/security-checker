@@ -2,6 +2,29 @@
 
 A web-based security diagnostic tool that analyzes websites across 6 security points.
 
+---
+
+## v3.0 Update
+
+Expanded from 6 checks to **15 checks** across 4 categories, added OWASP Top 10 mapping, and integrated AI-generated test points.
+
+**New in v3.0:**
+
+| Feature | Description |
+|---------|-------------|
+| Cookie security | HttpOnly, Secure, SameSite attribute checks per cookie |
+| Form analysis | CSRF token detection, autocomplete, insecure action URLs |
+| Extended headers | Referrer-Policy, Permissions-Policy, X-XSS-Protection, Server/X-Powered-By info leak, Cache-Control |
+| Risk levels | Each finding classified as Critical / High / Medium / Low |
+| OWASP Top 10 mapping | Findings mapped to OWASP 2021 categories (A01–A10) |
+| AI test points | Gemini-powered additional test point generation |
+| Score dashboard | Animated score ring with risk count breakdown |
+| JSON export | Full diagnostic report download |
+| PDF print | Print-optimized layout |
+| Auto-deploy | GitHub Actions → Azure on every push |
+
+---
+
 **Live demo:** [https://hasegawaan-securitycheck.com/](https://hasegawaan-securitycheck.com/)
 
 ## Overview
