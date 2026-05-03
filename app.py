@@ -230,6 +230,52 @@ HTML = r"""<!DOCTYPE html>
         /* ── Corner deco ── */
         .corner-deco { position:fixed; bottom:20px; right:20px; font-size:10px; color:var(--muted); letter-spacing:.15em; opacity:.3; pointer-events:none; }
 
+        /* ── Guide section ── */
+        .guide-section { margin-bottom:36px; animation:fadeUp .5s .1s ease both; }
+        .guide-steps { display:flex; align-items:center; gap:0; margin-bottom:20px; border:1px solid var(--border); background:var(--surface); overflow:hidden; }
+        .guide-step { flex:1; padding:18px 16px; text-align:center; }
+        .guide-arrow { color:var(--muted); font-size:18px; padding:0 4px; flex-shrink:0; }
+        .step-num { font-family:var(--sans); font-weight:700; font-size:22px; color:var(--accent); line-height:1; margin-bottom:6px; }
+        .step-text { font-size:13px; color:#fff; margin-bottom:4px; }
+        .step-sub { font-size:10px; color:var(--muted2); letter-spacing:.06em; }
+        .guide-step:not(:last-child) { border-right:1px solid var(--border); }
+
+        .risk-legend { display:flex; gap:0; margin-bottom:20px; border:1px solid var(--border); background:var(--surface); overflow-x:auto; }
+        .legend-item { flex:1; display:flex; align-items:center; gap:8px; padding:11px 14px; font-size:11px; border-right:1px solid var(--border); white-space:nowrap; }
+        .legend-item:last-child { border-right:none; }
+        .legend-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+        .li-critical .legend-dot { background:var(--danger); box-shadow:0 0 6px var(--danger); }
+        .li-high     .legend-dot { background:var(--high);   box-shadow:0 0 6px var(--high); }
+        .li-medium   .legend-dot { background:var(--medium); box-shadow:0 0 6px var(--medium); }
+        .li-low      .legend-dot { background:var(--low);    box-shadow:0 0 6px var(--low); }
+        .li-pass     .legend-dot { background:var(--accent); box-shadow:0 0 6px var(--accent); }
+        .li-critical { color:var(--danger); } .li-high { color:var(--high); } .li-medium { color:var(--medium); } .li-low { color:var(--low); } .li-pass { color:var(--accent); }
+
+        .check-cats { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px; }
+        @media(max-width:600px){ .check-cats { grid-template-columns:repeat(2,1fr); } }
+        .cat-card { background:var(--surface); border:1px solid var(--border); padding:16px; }
+        .cat-icon { font-size:20px; margin-bottom:8px; }
+        .cat-name { font-family:var(--sans); font-weight:700; font-size:13px; color:#fff; margin-bottom:4px; }
+        .cat-desc { font-size:10px; color:var(--muted2); line-height:1.5; }
+
+        /* ── Ethics notice ── */
+        .ethics-notice { display:flex; gap:12px; align-items:flex-start; padding:14px 18px; border:1px solid rgba(255,215,0,.2); background:rgba(255,215,0,.04); margin-bottom:20px; }
+        .ethics-icon { color:var(--medium); font-size:16px; flex-shrink:0; margin-top:1px; }
+        .ethics-text { font-size:11px; color:var(--muted2); line-height:1.7; }
+        .ethics-text strong { color:var(--medium); display:block; margin-bottom:4px; letter-spacing:.05em; }
+
+        /* ── Test design table ── */
+        .test-table-wrap { overflow-x:auto; margin:4px 0; }
+        .test-table { width:100%; border-collapse:collapse; font-size:11px; }
+        .test-table th { background:rgba(0,255,136,.07); color:var(--accent); padding:8px 10px; text-align:left; border-bottom:1px solid var(--border2); font-family:var(--sans); font-weight:700; font-size:10px; letter-spacing:.1em; text-transform:uppercase; white-space:nowrap; }
+        .test-table td { padding:8px 10px; border-bottom:1px solid var(--border); color:var(--text); vertical-align:top; line-height:1.55; }
+        .test-table tr:last-child td { border-bottom:none; }
+        .test-table tr:hover td { background:rgba(255,255,255,.015); }
+        .test-table td:first-child { font-family:var(--sans); font-weight:700; color:var(--accent2); white-space:nowrap; }
+        .prio-high   { color:var(--danger) !important; font-weight:bold; }
+        .prio-medium { color:var(--medium) !important; }
+        .prio-low    { color:var(--low) !important; }
+
         /* ── Print styles ── */
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; animation: none !important; transition: none !important; }
@@ -327,6 +373,73 @@ HTML = r"""<!DOCTYPE html>
     </form>
 
     <div class="loading-bar" id="loadingBar"></div>
+
+    {% if not has_results %}
+    <!-- Usage guide (shown only before first scan) -->
+    <div class="guide-section">
+        <div class="guide-steps">
+            <div class="guide-step">
+                <div class="step-num">01</div>
+                <div class="step-text">URLを入力</div>
+                <div class="step-sub">https:// から始まるURLを入力</div>
+            </div>
+            <div class="guide-arrow">→</div>
+            <div class="guide-step">
+                <div class="step-num">02</div>
+                <div class="step-text">SCAN を実行</div>
+                <div class="step-sub">15項目を自動チェック（約5〜10秒）</div>
+            </div>
+            <div class="guide-arrow">→</div>
+            <div class="guide-step">
+                <div class="step-num">03</div>
+                <div class="step-text">結果を確認</div>
+                <div class="step-sub">レポート出力・AI テスト観点生成</div>
+            </div>
+        </div>
+
+        <div class="risk-legend">
+            <div class="legend-item li-critical"><span class="legend-dot"></span>Critical — 即時対応必須</div>
+            <div class="legend-item li-high"><span class="legend-dot"></span>High — 早急に対応</div>
+            <div class="legend-item li-medium"><span class="legend-dot"></span>Medium — 計画的に対応</div>
+            <div class="legend-item li-low"><span class="legend-dot"></span>Low — 余裕があれば対応</div>
+            <div class="legend-item li-pass"><span class="legend-dot"></span>Pass — 問題なし</div>
+        </div>
+
+        <div class="check-cats">
+            <div class="cat-card">
+                <div class="cat-icon">🔒</div>
+                <div class="cat-name">SSL / TLS</div>
+                <div class="cat-desc">HTTPS・証明書の有効期限・TLSバージョン（3項目）</div>
+            </div>
+            <div class="cat-card">
+                <div class="cat-icon">📋</div>
+                <div class="cat-name">HTTP Headers</div>
+                <div class="cat-desc">セキュリティヘッダー・バージョン情報漏洩など（9項目）</div>
+            </div>
+            <div class="cat-card">
+                <div class="cat-icon">🍪</div>
+                <div class="cat-name">Cookie</div>
+                <div class="cat-desc">HttpOnly・Secure・SameSite 属性をCookieごとに確認</div>
+            </div>
+            <div class="cat-card">
+                <div class="cat-icon">📝</div>
+                <div class="cat-name">フォーム</div>
+                <div class="cat-desc">CSRF対策・autocomplete属性・送信先URL</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Ethics notice (always visible) -->
+    <div class="ethics-notice">
+        <div class="ethics-icon">⚠</div>
+        <div class="ethics-text">
+            <strong>安全・倫理面の制限</strong>
+            本ツールはHTTPヘッダーの受動的な確認のみ行い、攻撃・改ざん・不正アクセスは一切行いません。
+            自身が管理するサイト、または診断許可を得たサイトのみに使用してください。
+            本ツールはプロフェッショナルなペネトレーションテストの代替ではありません。
+        </div>
+    </div>
 
     {% if has_results %}
 
@@ -570,16 +683,66 @@ function loadAI() {
 }
 
 function renderMarkdown(text) {
-    var escaped = text
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    return escaped
-        .replace(/^## (.+)$/gm, '<div class="md-h2">$1</div>')
-        .replace(/^### (.+)$/gm, '<div class="md-h3">$1</div>')
-        .replace(/\*\*(.+?)\*\*/g, '<span class="md-strong">$1</span>')
-        .replace(/`([^`]+)`/g, '<code class="md-code">$1</code>')
-        .replace(/^[-*] (.+)$/gm, '<div class="md-li">$1</div>')
-        .replace(/\n{2,}/g, '<br><br>')
-        .replace(/\n/g, '\n');
+    var lines = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').split('\n');
+    var html = [];
+    var i = 0;
+    while (i < lines.length) {
+        var line = lines[i];
+        var trimmed = line.trim();
+        if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+            var tableLines = [];
+            while (i < lines.length && lines[i].trim().startsWith('|')) {
+                tableLines.push(lines[i]);
+                i++;
+            }
+            html.push(renderTable(tableLines));
+            continue;
+        }
+        if (trimmed.match(/^## /))
+            html.push('<div class="md-h2">' + trimmed.slice(3) + '</div>');
+        else if (trimmed.match(/^### /))
+            html.push('<div class="md-h3">' + trimmed.slice(4) + '</div>');
+        else if (trimmed.match(/^[-*] /))
+            html.push('<div class="md-li">' + inlineFormat(trimmed.slice(2)) + '</div>');
+        else if (trimmed === '')
+            html.push('<br>');
+        else
+            html.push('<p style="font-size:12px;color:var(--text);margin:3px 0">' + inlineFormat(trimmed) + '</p>');
+        i++;
+    }
+    return html.join('\n');
+}
+
+function inlineFormat(s) {
+    return s.replace(/\*\*(.+?)\*\*/g, '<span class="md-strong">$1</span>')
+            .replace(/`([^`]+)`/g, '<code class="md-code">$1</code>');
+}
+
+function renderTable(lines) {
+    var html = '<div class="test-table-wrap"><table class="test-table">';
+    var inBody = false;
+    lines.forEach(function(line) {
+        var cells = line.trim().split('|').slice(1,-1);
+        if (cells.every(function(c){ return /^[-: ]+$/.test(c); })) {
+            html += '</thead><tbody>';
+            inBody = true;
+            return;
+        }
+        if (!inBody && html.indexOf('<thead>') === -1) html += '<thead>';
+        html += '<tr>';
+        cells.forEach(function(c, idx) {
+            var v = c.trim();
+            if (inBody) {
+                var cls = v === '高' ? ' class="prio-high"' : v === '中' ? ' class="prio-medium"' : v === '低' ? ' class="prio-low"' : '';
+                html += '<td' + cls + '>' + inlineFormat(v) + '</td>';
+            } else {
+                html += '<th>' + v + '</th>';
+            }
+        });
+        html += '</tr>';
+    });
+    html += '</tbody></table></div>';
+    return html;
 }
 
 // ── JSON export ───────────────────────────────────────────────────
@@ -666,30 +829,27 @@ def ai_points():
         for f in findings if not f.get("ok")
     ) or "重大な問題は検出されませんでした"
 
-    prompt = f"""あなたはWebセキュリティ診断の専門家（SHIFT Security レベル）です。
-自動スキャン結果を基に、手動テストが必要な追加テスト観点を生成してください。
+    prompt = f"""あなたはWebセキュリティ診断と品質保証の専門家です。
+自動スキャン結果を基に、手動テスト設計表を日本語で作成してください。
 
 対象URL: {url}
 
 自動スキャン検出問題:
 {failed_lines}
 
-以下の形式で回答してください（日本語・簡潔・実践的に）:
+以下のmarkdown表形式で10〜15件のテストケースを作成してください。
+表の前後に余分な文章は不要です。表と補足メモのみ出力してください。
 
-## 🔴 Critical / High Priority テスト観点
-（緊急度の高い手動テスト観点を4-6個。具体的なテスト手順を含む）
+## テスト設計表
 
-## 🟡 Medium Priority テスト観点
-（中程度の優先度のテスト観点を3-5個）
+| ID | テスト観点 | 確認手順 | 期待結果 | 優先度 | OWASP |
+|----|----------|---------|--------|------|-------|
+| T-001 | （テスト観点名） | （具体的な確認手順1〜2文） | （期待される正常な結果） | 高/中/低 | A0X |
 
-## 🟢 確認推奨事項
-（追加確認事項・設定確認を3-4個）
+優先度の基準：高＝Critical/High、中＝Medium、低＝Low
 
-## 推奨テストツール
-（このサイトに適したツール名・コマンド例を2-3個）
-
-## 品質保証観点
-（QAエンジニアとして特に注目すべきテスト設計観点を2-3個）"""
+## 補足メモ
+- （テスト実施上の注意点を3個以内、箇条書き）"""
 
     try:
         client = genai.Client(api_key=api_key)
