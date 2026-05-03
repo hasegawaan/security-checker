@@ -232,7 +232,10 @@ HTML = r"""<!DOCTYPE html>
 
         /* ── Print styles ── */
         @media print {
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; animation: none !important; transition: none !important; }
+            html, body { height: auto !important; overflow: visible !important; min-height: 0 !important; }
+            .container { padding-bottom: 0 !important; }
+            .export-bar { margin-bottom: 0 !important; }
             body { background:#fff !important; color:#111 !important; font-family: Arial, sans-serif; }
             body::before, body::after, .corner-deco, .scan-form, .loading-bar,
             .export-bar, .ai-trigger-btn, #ai-body, #ai-loading { display:none !important; }
