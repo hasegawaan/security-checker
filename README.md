@@ -1,57 +1,38 @@
-# Web Security Checker / Webセキュリティチェッカー
+# SEC//SCAN — Web Security Checker
 
-URLを入力するだけで、Webサイトのセキュリティ設定を自動チェックするPythonツールです。
+A web-based security diagnostic tool that analyzes websites across 6 security points.
 
-## チェック項目
+**Live demo:** [https://hasegawaan-securitycheck.com/](https://hasegawaan-securitycheck.com/)
 
-| 項目 | 説明 |
-|---|---|
-| HTTPS | 暗号化通信が有効かどうか |
-| SSL証明書 | 証明書の有効性と残り日数 |
-| HSTS | HTTPSを強制するヘッダーの有無 |
-| X-Frame-Options | クリックジャッキング対策 |
-| CSP | XSS攻撃対策（スクリプト読み込み制限）|
-| X-Content-Type-Options | MIMEスニッフィング対策 |
+## Overview
 
-## 使い方
+Built as a personal project to learn web security and infrastructure hands-on. The tool scans any URL and generates a security score based on common vulnerability indicators.
 
-```bash
-python3 checker.py <URL>
-```
+## Security Checks
 
-### 実行例
+| Check | Description |
+|-------|-------------|
+| HTTPS | Whether encrypted communication is enabled |
+| SSL Certificate | Certificate validity and expiry |
+| HSTS | HTTP Strict Transport Security header |
+| X-Frame-Options | Clickjacking protection |
+| CSP | Content Security Policy (XSS mitigation) |
+| X-Content-Type-Options | MIME sniffing protection |
 
-```bash
-python3 checker.py https://github.com
-```
+## Tech Stack
 
-### 出力例
+- Python (Flask) — backend API
+- HTML / CSS / JavaScript — frontend
+- Azure — hosting and deployment
 
-```
-========================================
-  安全检查报告 / セキュリティチェック
-  目标 / 対象: https://github.com
-========================================
-[✅] HTTPS 已启用 / HTTPS 有効
-[✅] SSL证书有效，还有 33 天过期 / SSL証明書有効（残り33日）
-[✅] HSTS 已设置 / HSTS 設定済み
-[✅] X-Frame-Options 已设置 / X-Frame-Options 設定済み
-[✅] CSP 已设置 / CSP 設定済み
-[✅] X-Content-Type-Options 已设置 / X-Content-Type-Options 設定済み
-========================================
-  安全评分 / セキュリティスコア: 6 / 6
-  评价 / 評価: 优秀 ✅
-========================================
-```
+## Background
 
-## 必要環境
+Developed to learn security concepts through practice. After deploying, I ran the tool against itself and discovered it scored 0/6. I then identified and fixed each vulnerability until achieving a perfect score — experiencing the full cycle of vulnerability discovery and remediation firsthand.
 
-- Python 3.x
-- 外部ライブラリ不要（標準ライブラリのみ使用）
+## What I Learned
 
-## 学んだこと
-
-- HTTPSとSSL/TLSの仕組み
-- セキュリティヘッダーの種類と役割
-- XSS・クリックジャッキング・ダウングレード攻撃などの攻撃手法
-- PythonによるHTTPリクエストとレスポンスの処理
+- HTTPS / SSL/TLS mechanisms
+- Types and roles of security headers
+- Attack methods: XSS, clickjacking, downgrade attacks
+- Python HTTP request/response handling
+- Azure server setup and deployment
