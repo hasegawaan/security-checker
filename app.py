@@ -680,8 +680,8 @@ def ai_points():
 ## 推奨テストツール
 （このサイトに適したツール名・コマンド例を2-3個）
 
-## SHIFT 品質保証観点
-（SHIFT社のQAとして特に注目すべきテスト設計観点を2-3個）"""
+## 品質保証観点
+（QAエンジニアとして特に注目すべきテスト設計観点を2-3個）"""
 
     try:
         client = genai.Client(api_key=api_key)
@@ -689,7 +689,7 @@ def ai_points():
             model="gemini-2.5-flash-lite",
             contents=prompt,
             config=genai_types.GenerateContentConfig(
-                system_instruction="あなたはWebセキュリティ診断と品質保証の専門家です。簡潔で実践的な回答をしてください。",
+                system_instruction="あなたはWebセキュリティ診断と品質保証の専門家です。会社名は絶対に出さず、簡潔で実践的な回答をしてください。",
                 max_output_tokens=2000,
             ),
         )
