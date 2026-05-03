@@ -4,24 +4,24 @@ A web-based security diagnostic tool that analyzes websites across 6 security po
 
 ---
 
-## v3.0 Update
+## v3.0 アップデート
 
-Expanded from 6 checks to **15 checks** across 4 categories, added OWASP Top 10 mapping, and integrated AI-generated test points.
+チェック項目を6項目から**15項目**に拡充し、OWASP Top 10マッピングとAI生成テスト観点機能を追加しました。
 
-**New in v3.0:**
+**v3.0 新機能一覧：**
 
-| Feature | Description |
-|---------|-------------|
-| Cookie security | HttpOnly, Secure, SameSite attribute checks per cookie |
-| Form analysis | CSRF token detection, autocomplete, insecure action URLs |
-| Extended headers | Referrer-Policy, Permissions-Policy, X-XSS-Protection, Server/X-Powered-By info leak, Cache-Control |
-| Risk levels | Each finding classified as Critical / High / Medium / Low |
-| OWASP Top 10 mapping | Findings mapped to OWASP 2021 categories (A01–A10) |
-| AI test points | Gemini-powered additional test point generation |
-| Score dashboard | Animated score ring with risk count breakdown |
-| JSON export | Full diagnostic report download |
-| PDF print | Print-optimized layout |
-| Auto-deploy | GitHub Actions → Azure on every push |
+| 機能 | 内容 |
+|------|------|
+| Cookie セキュリティ | HttpOnly・Secure・SameSite 属性をCookieごとに確認 |
+| フォーム解析 | CSRFトークン検出・autocomplete属性・HTTP送信先チェック |
+| ヘッダー拡充 | Referrer-Policy・Permissions-Policy・X-XSS-Protection・Server/X-Powered-By情報漏洩・Cache-Control |
+| リスクレベル | 各チェック結果を Critical / High / Medium / Low で分類 |
+| OWASP Top 10 マッピング | 検出した問題をOWASP 2021カテゴリ（A01〜A10）に対応付け |
+| AI テスト観点生成 | Gemini APIによる追加テスト観点の自動生成 |
+| スコアダッシュボード | アニメーション付きスコアリングとリスク件数の可視化 |
+| JSON エクスポート | 診断レポートのダウンロード |
+| PDF 印刷 | 印刷最適化レイアウト |
+| 自動デプロイ | GitHub Actions → Azure（push のたびに自動反映） |
 
 ---
 
