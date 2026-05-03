@@ -645,6 +645,11 @@ def index():
 
 @app.route("/api/ai-points", methods=["POST"])
 def ai_points():
+    referer = request.headers.get("Referer", "")
+    host = request.headers.get("Host", "")
+    if not (referer.startswith(f"https://{host}") or referer.startswith(f"http://{host}") or host in ("127.0.0.1:8888", "localhost:8888")):
+        return jsonify({"error": "不正なリクエスト"}), 403
+
     if not HAS_GEMINI:
         return jsonify({"error": "google-generativeaiライブラリが未インストールです。pip install google-generativeai を実行してください。"})
 
