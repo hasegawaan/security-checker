@@ -665,7 +665,7 @@ function loadAI() {
             e.style.display = 'block';
         } else {
             var r = document.getElementById('ai-result');
-            r.innerHTML = renderMarkdown(data.text);
+            r.innerHTML = data.html;
             r.style.display = 'block';
         }
         // footer note
@@ -806,6 +806,72 @@ def index():
     )
 
 
+def md_to_html(text: str) -> str:
+    import html as html_lib
+    import re as re_mod
+    lines = text.split("\n")
+    out = []
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        stripped = line.strip()
+        # Table detection
+        if stripped.startswith("|") and stripped.endswith("|"):
+            table_lines = []
+            while i < len(lines) and lines[i].strip().startswith("|"):
+                table_lines.append(lines[i])
+                i += 1
+            out.append(_render_table(table_lines))
+            continue
+        # Headings
+        if stripped.startswith("## "):
+            out.append(f'<div class="md-h2">{html_lib.escape(stripped[3:])}</div>')
+        elif stripped.startswith("### "):
+            out.append(f'<div class="md-h3">{html_lib.escape(stripped[4:])}</div>')
+        elif stripped.startswith("- ") or stripped.startswith("* "):
+            out.append(f'<div class="md-li">{_inline(stripped[2:])}</div>')
+        elif stripped == "":
+            out.append("<br>")
+        else:
+            out.append(f'<p style="font-size:12px;color:var(--text);margin:3px 0">{_inline(stripped)}</p>')
+        i += 1
+    return "\n".join(out)
+
+
+def _inline(s: str) -> str:
+    import html as html_lib, re as re_mod
+    s = html_lib.escape(s)
+    s = re_mod.sub(r"\*\*(.+?)\*\*", r'<span class="md-strong">\1</span>', s)
+    s = re_mod.sub(r"`([^`]+)`", r'<code class="md-code">\1</code>', s)
+    return s
+
+
+def _render_table(lines: list) -> str:
+    import html as html_lib, re
+    rows = []
+    sep_idx = None
+    for idx, line in enumerate(lines):
+        cells = [c.strip() for c in line.strip().split("|")[1:-1]]
+        if all(re.match(r"^[-: ]+$", c) for c in cells):
+            sep_idx = idx
+        else:
+            rows.append(cells)
+    if sep_idx is None or len(rows) == 0:
+        return ""
+    header = rows[0]
+    body = rows[1:]
+    def th(c): return f"<th>{html_lib.escape(c)}</th>"
+    def td(c):
+        prio = {"高": "prio-high", "中": "prio-medium", "低": "prio-low"}.get(c, "")
+        cls = f' class="{prio}"' if prio else ""
+        return f"<td{cls}>{_inline(c)}</td>"
+    head_html = "<thead><tr>" + "".join(th(c) for c in header) + "</tr></thead>"
+    body_html = "<tbody>" + "".join(
+        "<tr>" + "".join(td(c) for c in row) + "</tr>" for row in body
+    ) + "</tbody>"
+    return f'<div class="test-table-wrap"><table class="test-table">{head_html}{body_html}</table></div>'
+
+
 @app.route("/api/ai-points", methods=["POST"])
 def ai_points():
     referer = request.headers.get("Referer", "")
@@ -861,7 +927,7 @@ def ai_points():
                 max_output_tokens=2000,
             ),
         )
-        return jsonify({"text": response.text})
+        return jsonify({"html": md_to_html(response.text)})
     except Exception as e:
         return jsonify({"error": f"AI生成エラー: {str(e)}"})
 
