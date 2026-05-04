@@ -16,7 +16,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/azureuser/security-checker
-            git pull origin main
-            pip3 install -q flask requests google-genai
+            git pull git@github.com:hasegawaan/security-checker.git main
+            pip3 install -q flask requests google-genai --break-system-packages 2>/dev/null || true
             sudo systemctl restart security-checker
             echo "デプロイ完了"
