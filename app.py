@@ -63,21 +63,79 @@ HTML = r"""<!DOCTYPE html>
         .topbar-badge { font-size:10px; background:rgba(96,165,250,.2); color:#93c5fd; padding:2px 8px; border-radius:20px; border:1px solid rgba(96,165,250,.3); font-weight:500; }
 
         /* ── Page header ── */
-        .header { padding:36px 0 32px; animation:fadeDown .5s ease both; }
-        .header-tag { font-size:12px; font-weight:600; color:var(--blue); text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px; }
-        h1 { font-size:clamp(26px,4vw,38px); font-weight:700; color:var(--navy); letter-spacing:-.02em; line-height:1.15; }
+        .header {
+            padding:52px 0 44px;
+            animation:fadeDown .5s ease both;
+            text-align:center;
+        }
+        .header-eyebrow {
+            display:inline-flex; align-items:center; gap:6px;
+            background:#eff6ff; border:1px solid #bfdbfe;
+            color:var(--blue); font-size:11px; font-weight:600;
+            letter-spacing:.08em; text-transform:uppercase;
+            padding:5px 14px; border-radius:20px; margin-bottom:20px;
+        }
+        .header-eyebrow::before { content:'🛡'; font-size:12px; }
+        h1 {
+            font-size:clamp(32px,5vw,52px);
+            font-weight:800;
+            color:var(--navy);
+            letter-spacing:-.03em;
+            line-height:1.1;
+            margin-bottom:14px;
+        }
         h1 span { color:var(--blue); }
-        .header-sub { font-size:13px; color:var(--muted2); margin-top:8px; }
+        .header-sub {
+            font-size:14px; color:var(--muted2); max-width:560px;
+            margin:0 auto; line-height:1.7;
+        }
+        .header-chips {
+            display:flex; flex-wrap:wrap; justify-content:center;
+            gap:8px; margin-top:20px;
+        }
+        .header-chip {
+            background:var(--surface); border:1px solid var(--border);
+            color:var(--muted2); font-size:11px; font-weight:500;
+            padding:4px 12px; border-radius:20px;
+            box-shadow:var(--shadow-sm);
+        }
 
         /* ── Form ── */
-        .scan-form { display:flex; background:var(--surface); border:1.5px solid var(--border2); border-radius:10px; overflow:hidden; box-shadow:var(--shadow-md); margin-bottom:32px; animation:fadeDown .5s .08s ease both; transition:border-color .2s, box-shadow .2s; }
-        .scan-form:focus-within { border-color:var(--blue); box-shadow:0 0 0 3px rgba(37,99,235,.12), var(--shadow-md); }
-        .prompt-label { display:flex; align-items:center; padding:0 16px; color:var(--muted2); font-size:13px; font-weight:500; border-right:1.5px solid var(--border); background:var(--surface2); white-space:nowrap; user-select:none; }
-        input[type=text] { flex:1; background:transparent; border:none; outline:none; padding:15px 18px; font-family:var(--sans); font-size:14px; color:var(--text); }
+        .scan-form-wrap { margin-bottom:32px; animation:fadeDown .5s .1s ease both; }
+        .scan-form {
+            display:flex; background:var(--surface);
+            border:2px solid var(--border); border-radius:14px;
+            overflow:hidden; box-shadow:var(--shadow-md);
+            transition:border-color .2s, box-shadow .2s;
+        }
+        .scan-form:focus-within {
+            border-color:var(--blue);
+            box-shadow:0 0 0 4px rgba(37,99,235,.1), var(--shadow-md);
+        }
+        .prompt-label {
+            display:flex; align-items:center; gap:8px;
+            padding:0 18px; color:var(--muted2); font-size:13px;
+            font-weight:500; border-right:1px solid var(--border);
+            background:var(--surface2); white-space:nowrap; user-select:none;
+        }
+        .prompt-label svg { width:15px; height:15px; opacity:.5; }
+        input[type=text] {
+            flex:1; background:transparent; border:none; outline:none;
+            padding:18px 20px; font-family:var(--sans); font-size:15px;
+            color:var(--text);
+        }
         input[type=text]::placeholder { color:var(--muted); }
-        .scan-btn { background:var(--navy); color:#fff; border:none; padding:0 28px; font-family:var(--sans); font-weight:600; font-size:13px; letter-spacing:.03em; cursor:pointer; transition:background .15s; white-space:nowrap; }
-        .scan-btn:hover { background:var(--navy2); }
-        .scan-btn:active { transform:scale(.99); }
+        .scan-btn {
+            background:linear-gradient(135deg,#1e40af,#2563eb);
+            color:#fff; border:none; padding:0 32px;
+            font-family:var(--sans); font-weight:700; font-size:14px;
+            letter-spacing:.01em; cursor:pointer;
+            transition:opacity .15s, transform .1s;
+            white-space:nowrap; display:flex; align-items:center; gap:8px;
+        }
+        .scan-btn:hover { opacity:.92; }
+        .scan-btn:active { transform:scale(.98); }
+        .scan-hint { text-align:center; font-size:11px; color:var(--muted); margin-top:10px; }
 
         /* ── Loading ── */
         .loading-bar { display:none; height:3px; background:var(--border); margin-bottom:24px; overflow:hidden; border-radius:2px; }
@@ -293,17 +351,33 @@ HTML = r"""<!DOCTYPE html>
 
     <!-- Header -->
     <header class="header">
-        <div class="header-tag">Web セキュリティ診断ツール</div>
-        <h1>AIで強化された<span>セキュリティ診断</span></h1>
-        <p class="header-sub">OWASP Top 10 対応 &nbsp;·&nbsp; SSL / HTTP Headers / Cookie / Form &nbsp;·&nbsp; AI テスト設計表生成</p>
+        <div class="header-eyebrow">AI セキュリティ診断ツール</div>
+        <h1>Webサイトの<span>セキュリティ</span>を<br>即時に可視化</h1>
+        <p class="header-sub">URLを入力するだけで15項目を自動チェック。OWASP Top 10に対応し、AIがテスト設計表を自動生成します。</p>
+        <div class="header-chips">
+            <span class="header-chip">🔒 SSL / TLS</span>
+            <span class="header-chip">📋 HTTP Headers</span>
+            <span class="header-chip">🍪 Cookie</span>
+            <span class="header-chip">📝 フォーム解析</span>
+            <span class="header-chip">🤖 AI テスト設計</span>
+        </div>
     </header>
 
     <!-- Scan form -->
-    <form method="post" class="scan-form" id="scanForm">
-        <span class="prompt-label">URL</span>
-        <input type="text" name="url" placeholder="https://example.com" value="{{ url }}" autocomplete="off" spellcheck="false" required>
-        <button type="submit" class="scan-btn">診断開始</button>
-    </form>
+    <div class="scan-form-wrap">
+        <form method="post" class="scan-form" id="scanForm">
+            <span class="prompt-label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                診断URL
+            </span>
+            <input type="text" name="url" placeholder="https://example.com" value="{{ url }}" autocomplete="off" spellcheck="false" required>
+            <button type="submit" class="scan-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                診断開始
+            </button>
+        </form>
+        <p class="scan-hint">診断は約5〜10秒かかります。自身が管理するサイト、または許可を得たサイトのみに使用してください。</p>
+    </div>
 
     <div class="loading-bar" id="loadingBar"></div>
 
