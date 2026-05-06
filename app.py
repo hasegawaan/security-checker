@@ -137,6 +137,10 @@ HTML = r"""<!DOCTYPE html>
         .scan-btn:active { transform:scale(.98); }
         .scan-hint { text-align:center; font-size:11px; color:var(--muted); margin-top:10px; }
 
+        /* ── Scan error ── */
+        .scan-error { display:flex; align-items:center; gap:10px; padding:13px 18px; background:#fee2e2; border:1px solid #fecaca; border-radius:10px; color:#991b1b; font-size:13px; font-weight:500; margin-bottom:20px; animation:fadeUp .3s ease both; }
+        .scan-error-icon { font-size:14px; font-weight:700; flex-shrink:0; }
+
         /* ── Loading ── */
         .loading-bar { display:none; height:3px; background:var(--border); margin-bottom:24px; overflow:hidden; border-radius:2px; }
         .loading-bar.active { display:block; }
@@ -380,6 +384,13 @@ HTML = r"""<!DOCTYPE html>
     </div>
 
     <div class="loading-bar" id="loadingBar"></div>
+
+    {% if scan_error %}
+    <div class="scan-error">
+        <span class="scan-error-icon">✕</span>
+        {{ scan_error }}
+    </div>
+    {% endif %}
 
     {% if not has_results %}
     <!-- Usage guide (shown only before first scan) -->
@@ -781,10 +792,27 @@ def index():
     results_json = "null"
     findings_json = "[]"
 
+    scan_error = ""
+
     if request.method == "POST":
         url = request.form.get("url", "").strip()
-        checker = SecurityChecker(url)
-        all_results = checker.run_all()
+
+        # ── 入力値検証 ──────────────────────────────
+        raw = url if url.startswith(("http://", "https://")) else "https://" + url
+        import urllib.parse as _up, socket as _sock
+        hostname = _up.urlparse(raw).hostname or ""
+
+        if not hostname or "." not in hostname:
+            scan_error = "有効なURLを入力してください（例：https://example.com）"
+        else:
+            try:
+                _sock.getaddrinfo(hostname, None)
+            except _sock.gaierror:
+                scan_error = f"ドメイン「{hostname}」が見つかりません。URLを確認してください。"
+
+        if not scan_error:
+            checker = SecurityChecker(url)
+            all_results = checker.run_all()
         summary = checker.get_summary(all_results)
         scan_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -811,6 +839,7 @@ def index():
         findings_json=findings_json,
         OWASP_NAMES=OWASP_NAMES,
         has_results=bool(all_results),
+        scan_error=scan_error,
     )
 
 
