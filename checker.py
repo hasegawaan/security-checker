@@ -481,7 +481,10 @@ class SecurityChecker:
             if not r.ok and r.risk_level in risk_counts:
                 risk_counts[r.risk_level] += 1
 
-        score = int(passed / total * 100) if total else 0
+        # ペナルティ方式（リスクに応じて減点、最低10点）
+        penalties = {"critical": 15, "high": 8, "medium": 4, "low": 1}
+        deduction = sum(penalties.get(r.risk_level, 0) for r in results if not r.ok)
+        score = max(10, 100 - deduction)
 
         if risk_counts["critical"] > 0:
             grade, grade_color = "CRITICAL", "critical"
