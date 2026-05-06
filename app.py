@@ -813,8 +813,8 @@ def index():
         if not scan_error:
             checker = SecurityChecker(url)
             all_results = checker.run_all()
-        summary = checker.get_summary(all_results)
-        scan_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            summary = checker.get_summary(all_results)
+            scan_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         for r in all_results:
             cat = r.category if r.category in results_by_cat else "ssl"
